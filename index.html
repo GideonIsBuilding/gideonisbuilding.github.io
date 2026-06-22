@@ -63,9 +63,10 @@
     </div>
 
     <div class="topo-card">
-      <div class="topo-header"><span>fig.01 — system topology</span><span>hover a node</span></div>
+      <div class="topo-header"><span>FIG. 01 — TWO-NODE OBSERVABILITY LAB</span><span>click a component</span></div>
+      <div class="topo-filters" id="topoFilters"></div>
       <div class="topo-svg-wrap">
-        <svg id="topoSvg" viewBox="0 0 480 420" width="100%" style="display:block;"></svg>
+        <svg id="topoSvg" viewBox="0 0 548 368" width="100%" style="display:block;"></svg>
       </div>
       <div class="topo-detail">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
@@ -74,6 +75,7 @@
         </div>
         <p class="topo-role" id="topoRole"></p>
         <div class="topo-tools" id="topoTools"></div>
+        <a class="topo-arch-link" href="https://github.com/gideon-aleonogwe/lgtm-stack" target="_blank" rel="noopener">Explore the complete architecture →</a>
       </div>
     </div>
   </div>
@@ -119,8 +121,9 @@
 <section id="playground">
   <div class="play-head">
     <div>
-      <div class="section-label">§ 04 — Infrastructure playground</div>
-      <h2 class="section-title">Watch a system survive a bad day.</h2>
+      <div class="section-label">§ 04 — Anonymized incident replay</div>
+      <h2 class="section-title">One unhealthy node. Seventy percent of the errors.</h2>
+      <p class="inc-lead">During a high-volume payroll window, multiple clients in a shared environment began experiencing similar failures. Follow the investigation from Splunk to F5 — and eventually to a certificate-management collision.</p>
     </div>
     <div class="play-tabs" id="playTabs"></div>
   </div>
