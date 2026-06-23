@@ -595,24 +595,26 @@ function renderCases(){
     const open=state.expanded===c.id;
     const card=document.createElement('div');
     card.className='case-card';
-    const githubLink = c.github ? `<a href="${c.github}" class="case-link-btn" target="_blank" rel="noopener">${GITHUB_SVG}GitHub</a>` : '';
-    const liveLink   = c.live   ? `<a href="${c.live}"   class="case-link-btn" target="_blank" rel="noopener">${EXTERNAL_SVG}Live site</a>` : '';
+    const srcBtn = c.github
+      ? `<a href="${c.github}" class="case-src-btn" target="_blank" rel="noopener noreferrer"
+           aria-label="View ${c.title} source code on GitHub, opens in a new tab">${GITHUB_SVG}View source ↗</a>`
+      : '';
     card.innerHTML=`
-      <button class="case-toggle">
-        <div>
+      <div class="case-header">
+        <button class="case-expand-trigger" aria-expanded="${open}">
           <div class="case-meta">
             <span class="case-idx">0${i+1}</span>
             <span class="case-tag">${c.tag}</span>
             <span class="case-team">${c.team}</span>
           </div>
           <div class="case-title">${c.title}</div>
-        </div>
-        <div class="case-toggle-right">
+        </button>
+        ${srcBtn}
+        <button class="case-expand-btn" aria-label="${open?'Collapse':'Expand'} ${c.title} case study">
           <span class="case-open-text">${open?'Collapse':'Expand case'}</span>
           <span class="case-sym">${open?'–':'+'}</span>
-        </div>
-      </button>
-      <div class="case-links">${githubLink}${liveLink}</div>
+        </button>
+      </div>
       <div class="case-body">
         <div class="case-summary">
           <div>
@@ -630,10 +632,9 @@ function renderCases(){
           <div class="case-outcome"><div class="case-outcome-label">Measurable outcome</div><p class="case-outcome-p">${c.outcome}</p></div>
         </div>`:''}
       </div>`;
-    card.querySelector('.case-toggle').addEventListener('click',()=>{
-      state.expanded = state.expanded===c.id ? null : c.id;
-      renderCases();
-    });
+    const toggle=()=>{ state.expanded=state.expanded===c.id?null:c.id; renderCases(); };
+    card.querySelector('.case-expand-trigger').addEventListener('click',toggle);
+    card.querySelector('.case-expand-btn').addEventListener('click',toggle);
     el.appendChild(card);
   });
 }
