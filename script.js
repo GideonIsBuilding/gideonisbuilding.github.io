@@ -224,12 +224,37 @@ const INCIDENT_CONTROLS = [
   'Incident runbook updated with certificate-collision diagnostic pattern',
 ];
 
-const PRINCIPLE_DATA = [
-  {id:'rel',  name:'Reliability',          kind:'gauge', big:'99.95%', sub:'SLO target',         pct:'92%',  blurb:'Design for the blast radius you can tolerate, not the happy path.'},
-  {id:'auto', name:'Automation',           kind:'check', items:['IaC for every resource','Zero manual prod changes','Self-service environments'], blurb:'If I do it twice by hand, the third time it does itself.'},
-  {id:'obs',  name:'Observability',        kind:'spark', big:'p99 142ms', sub:'and falling',      blurb:'You cannot operate what you cannot see.'},
-  {id:'sec',  name:'Security',             kind:'check', items:['Least-privilege IAM','Secrets sealed at rest','Policy-as-code gates'], blurb:'The secure path should also be the easy path.'},
-  {id:'dx',   name:'Developer Experience', kind:'gauge', big:'88%',    sub:'golden-path adoption',pct:'88%',  blurb:'Ship faster by making the right thing the default.'},
+const OPERATING_PRINCIPLES = [
+  {id:'correlate', num:'01',
+   title:'Correlate before you speculate',
+   why:'Evidence narrows the search space faster than assumptions.',
+   action:'Correlate application errors with infrastructure identifiers such as pool member, node, host, pod, and availability zone.',
+   evidence:'Splunk correlation revealed that one F5 pool member accounted for approximately 70% of the observed errors.',
+   cta:{label:'Replay the incident →', href:'#playground'}},
+  {id:'exit', num:'02',
+   title:'Every change needs an exit',
+   why:'A deployment plan is incomplete without a safe recovery path.',
+   action:'Define health checks, rollback conditions, validation steps, and a known-good state before making production changes.',
+   evidence:'Versioned infrastructure, automated validation, reversible releases, and documented recovery procedures.',
+   cta:null},
+  {id:'pipeline', num:'03',
+   title:'The third repetition becomes a pipeline',
+   why:'Repeated manual work creates inconsistency, delays, and avoidable operational risk.',
+   action:'Convert recurring tasks into reviewed, observable, and reusable automation.',
+   evidence:'Infrastructure as Code, CI/CD workflows, temporary environments, and SwiftDeploy.',
+   cta:{label:'View SwiftDeploy →', href:'#work'}},
+  {id:'observe', num:'04',
+   title:'Observe boundaries, not only applications',
+   why:'An application can appear healthy while its host, endpoint, certificate, dependency, or telemetry path is failing.',
+   action:'Monitor services, infrastructure, endpoints, dependencies, and the telemetry pipeline itself.',
+   evidence:'OpenTelemetry, Prometheus, Loki, Tempo, Node Exporter, and Blackbox Exporter.',
+   cta:{label:'Explore the observability lab →', href:'#hero'}},
+  {id:'safe', num:'05',
+   title:'Make the safe path the easy path',
+   why:'Security and reliability should be built into platform defaults, not depend on every engineer remembering every rule.',
+   action:'Provide secure defaults through least privilege, secrets management, policy gates, unique resource identities, and safe self-service workflows.',
+   evidence:'Reusable infrastructure modules, controlled access, automated validation, and platform guardrails.',
+   cta:null},
 ];
 
 const TIMELINE_DATA = [
@@ -266,6 +291,7 @@ const state = {
   ask: {sel:null, status:'idle', failedIds:new Set()},
   expanded: 'forge',
   incStage: 'impact',
+  principle: 'correlate',
   menu: false,
 };
 let askTimer = null;
@@ -763,32 +789,52 @@ function renderIncident() {
 }
 renderIncident();
 
-/* ── PRINCIPLES ── */
+/* ── OPERATING MANUAL (principles) ── */
+function principleBody(p) {
+  return `<div class="opman-num">${p.num}</div>
+    <h3 class="opman-title">${p.title}</h3>
+    <div class="opman-section"><div class="opman-field-label">Why it matters</div><p class="opman-field-val">${p.why}</p></div>
+    <div class="opman-section"><div class="opman-field-label">My default action</div><p class="opman-field-val">${p.action}</p></div>
+    <div class="opman-section"><div class="opman-field-label">Evidence</div><p class="opman-field-val">${p.evidence}</p></div>
+    ${p.cta ? `<a href="${p.cta.href}" class="opman-cta">${p.cta.label}</a>` : ''}`;
+}
+
 function renderPrinciples(){
-  const el=document.getElementById('principlesGrid');
-  el.innerHTML='';
-  PRINCIPLE_DATA.forEach(p=>{
-    const card=document.createElement('div');
-    card.className='principle-card';
-    let vis='';
-    if(p.kind==='gauge'){
-      vis=`<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;"><span class="principle-big">${p.big}</span><span class="principle-sub">${p.sub}</span></div>
-           <div class="principle-bar-track"><div class="principle-bar-fill" style="--pct:${p.pct};"></div></div>`;
-    } else if(p.kind==='check'){
-      vis=`<div class="principle-checks">${p.items.map(it=>`<div class="principle-check"><span class="principle-check-icon">✓</span>${it}</div>`).join('')}</div>`;
-    } else if(p.kind==='spark'){
-      vis=`<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;"><span class="principle-big">${p.big}</span><span class="principle-sub">${p.sub}</span></div>
-           <svg viewBox="0 0 200 48" width="100%" height="48" style="display:block;">
-             <polyline points="0,38 25,30 50,34 75,22 100,26 125,16 150,20 175,11 200,14" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-             <polyline points="0,38 25,30 50,34 75,22 100,26 125,16 150,20 175,11 200,14 200,48 0,48" fill="var(--green-tint)" stroke="none" opacity="0.7"/>
-           </svg>`;
-    }
-    card.innerHTML=`
-      <div class="principle-head"><span class="principle-name">${p.name}</span><span class="principle-dot"></span></div>
-      <div class="principle-vis">${vis}</div>
-      <p class="principle-blurb">${p.blurb}</p>`;
-    el.appendChild(card);
+  const el = document.getElementById('principlesGrid');
+  el.innerHTML = '';
+  const active = OPERATING_PRINCIPLES.find(p => p.id === state.principle) || OPERATING_PRINCIPLES[0];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'opman';
+
+  // Desktop featured panel (left 60%)
+  const featured = document.createElement('div');
+  featured.className = 'opman-featured';
+  featured.innerHTML = principleBody(active);
+  wrap.appendChild(featured);
+
+  // Index list (right 40%)
+  const idx = document.createElement('div');
+  idx.className = 'opman-index';
+  OPERATING_PRINCIPLES.forEach(p => {
+    const isActive = p.id === state.principle;
+    const item = document.createElement('div');
+    item.className = 'opman-idx-item' + (isActive ? ' active' : '');
+    item.innerHTML = `<div class="opman-idx-hdr">
+        <span class="opman-idx-num">${p.num}</span>
+        <span class="opman-idx-title">${p.title}</span>
+        <span class="opman-idx-indicator"></span>
+      </div>
+      <div class="opman-idx-body">${principleBody(p)}</div>`;
+    item.querySelector('.opman-idx-hdr').addEventListener('click', () => {
+      state.principle = p.id;
+      renderPrinciples();
+    });
+    idx.appendChild(item);
   });
+  wrap.appendChild(idx);
+
+  el.appendChild(wrap);
 }
 renderPrinciples();
 
@@ -840,16 +886,3 @@ function renderNotes(){
 }
 renderNotes();
 
-/* ── ANIMATION OBSERVER ── */
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.querySelectorAll('.principle-bar-fill').forEach(b=>{
-        b.style.animation='none';
-        b.offsetHeight;
-        b.style.animation='bar 1.2s ease forwards';
-      });
-    }
-  });
-},{threshold:0.2});
-document.querySelectorAll('#principles').forEach(s=>io.observe(s));
