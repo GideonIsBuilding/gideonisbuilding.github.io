@@ -1,0 +1,21 @@
+{
+  "name": "Gideon Aleonogwe",
+  "short_name": "Gideon",
+  "description": "DevOps & SRE Engineer",
+  "icons": [
+    {
+      "src": "/favicon_io/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon_io/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#e8a020",
+  "background_color": "#0a0a0a",
+  "display": "standalone",
+  "start_url": "/"
+}
