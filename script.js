@@ -107,27 +107,34 @@ const GITHUB_SVG = `<svg viewBox="0 0 16 16" width="14" height="14" fill="curren
 const EXTERNAL_SVG = `<svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1V7M8 1h3m0 0v3m0-3L5 7"/></svg>`;
 
 const CASE_DATA = [
-  {id:'forge', tag:'CI/CD Platform', title:'Forge', team:'built from scratch · Python',
-    github:'https://github.com/gideon-aleonogwe/forge', live:null,
+  {id:'forge', tag:'CI/CD Platform', title:'Forge', team:'built from scratch · Python + Bash',
+    github:'https://github.com/GideonIsBuilding/forge', live:null,
     challenge:'Build an artifact registry and pipeline engine from scratch — declarative pipelines, real dependency resolution, and job isolation strong enough to trust with untrusted builds.',
     approach:'Reads declarative YAML pipelines, resolves transitive dependencies with a custom semver implementation, and executes jobs in fully isolated Docker containers with cgroup-enforced CPU, memory and PID limits. Bearer-token auth with Argon2 hashing; live build logs streamed over SSE without buffering.',
     tech:['Python','FastAPI','Docker','SQLite','semver'],
     outcome:'Content-addressed blob storage with SHA-256 verification at every pull, and an immutable SQLite-backed registry whose unique constraint makes version overwrites impossible. Ships as a pip-installable CLI with Slack alerting on pipeline and integrity events.',
     arch:['parse YAML','resolve semver','isolate · cgroups','sign + store']},
   {id:'lgtm', tag:'Observability Platform', title:'LGTM Stack', team:'Bash + Terraform · 2× EC2',
-    github:'https://github.com/gideon-aleonogwe/lgtm-stack', live:null,
+    github:'https://github.com/GideonIsBuilding/lgtm-stack', live:null,
     challenge:'Stand up a production-grade Loki · Grafana · Tempo · Prometheus stack with zero manual UI clicks — every config, unit file and dashboard generated from code.',
     approach:'Provisioned entirely via Terraform and four sequential setup scripts that read a single manifest of pinned binary versions. A five-phase bring-up validates configs with promtool and amtool before any service starts, then health-checks each service before starting the next.',
     tech:['Bash','Terraform','Prometheus','Loki','Tempo','Grafana','OTel'],
     outcome:'Multi-window burn-rate SLO alerting (14.4× fast / 5× slow) derived from a 99.5% objective, with inhibition rules that suppress symptom alerts when a cause is already firing. DORA metrics via GitHub Actions; every service runs non-root behind ProtectSystem=full.',
     arch:['pin versions','generate configs','validate · bring-up','burn-rate alert']},
   {id:'swiftdeploy', tag:'Deployment CLI', title:'SwiftDeploy', team:'Go · policy-gated',
-    github:'https://github.com/gideon-aleonogwe/swiftdeploy', live:null,
+    github:'https://github.com/GideonIsBuilding/swiftdeploy', live:null,
     challenge:'Give teams a declarative way to deploy that is safe by default and observable from the very first command.',
     approach:'A Go CLI that reads a single manifest.yaml as the sole source of truth and manages the full container lifecycle. Gates every deploy behind an OPA infrastructure policy (disk, CPU, memory) and gates canary promotions behind live Prometheus metrics — error rate and p99 latency.',
     tech:['Go','OPA','Prometheus','Docker','Nginx'],
     outcome:'A live terminal dashboard scrapes /metrics every 3 seconds and shows real-time policy compliance; an append-only audit trail writes to history.jsonl and produces audit_report.md on demand. Runs as a non-root user with dropped Linux capabilities.',
     arch:['plan','OPA gate','apply','canary on metrics']},
+  {id:'anomaly detector', tag:'DevSecOps', title:'Anomaly Detector', team:'Go · Z-score',
+    github:'https://github.com/GideonIsBuilding/anomaly-detector', live:null,
+    challenge:'Identify unusual patterns in large-scale operational data — without false positives.',
+    approach:'Real-time HTTP traffic anomaly detection engine built alongside a Nextcloud instance. Continuously tails Nginx JSON access logs, maintains deque-based sliding windows per IP and globally, and computes a rolling 30-minute baseline using mean and standard deviation.',
+    tech:['Go','Nginx','iptables','Docker'],
+    outcome:'A robust anomaly detection pipeline that flags anomalies when the z-score exceeds 3.0 or the rate surpasses 5x the baseline mean — whichever fires first. Blocks offending IPs via iptables DROP rules at the kernel level within 5 seconds and releases bans on a backoff schedule (10min → 30min → 2hrs → permanent).',
+    arch:['sliding windows','networking','apply','audit log','slack alerting']},
 ];
 
 const INCIDENT_STAGES = [
@@ -277,10 +284,10 @@ const CAP_DATA = [
 ];
 
 const NOTES_DATA = [
-  {pub:'Syntasso',    mins:'7 min', title:'Designing seal & unseal: Shamir\'s Secret Sharing over GF(2⁸)',  kicker:'Architecture decision'},
-  {pub:'TechPeak Lab',mins:'5 min', title:'Catching silent MFT failures with SHA-256 synthetic checks',      kicker:'Incident lesson'},
-  {pub:'Spacelift',   mins:'6 min', title:'Policy-as-code gates that don\'t slow teams down',                kicker:'Developer experience'},
-  {pub:'RunWhen',     mins:'4 min', title:'TTL-based ephemeral environments without the cleanup tax',         kicker:'Experiment'},
+  {pub:'Syntasso',            mins:'7 min', title:'The 10 Best MCP Servers for Cloud-Native Engineers in 2025',  kicker:'Cloud-Native',  href:'https://www.syntasso.io/post/the-10-best-mcp-servers-for-cloud-native-engineers-in-2025'},
+  {pub:'EverythingDevOps',    mins:'19 min', title:'Building a Production-Grade LGTM Stack on Two Servers; Everything That Worked and Everything That Broke',  kicker:'Observability',  href:'https://news.everythingdevops.dev/p/building-a-production-grade-lgtm-stack'},
+  {pub:'Medium',              mins:'40 min', title:'I Built a Tool That Detects DDoS Attacks in Real Time — Here\'s Exactly How It Works',  kicker:'DevSecOps',  href:'https://medium.com/@gideonisbuilding/i-built-a-tool-that-detects-ddos-attacks-in-real-time-heres-exactly-how-it-works-95860a781468'},
+  {pub:'Medium',              mins:'16 min', title:'What If Your Deployment Tool Was Smart Enough to Refuse Bad Deploys?',  kicker:'Developer Experience',  href:'https://medium.com/@gideonisbuilding/what-if-your-deployment-tool-was-smart-enough-to-refuse-bad-deploys-3a8523659db3'},
 ];
 
 /* ── STATE ── */
@@ -876,7 +883,7 @@ function renderNotes(){
   el.innerHTML='';
   NOTES_DATA.forEach(n=>{
     const card=document.createElement('a');
-    card.href='#';
+    card.href=n.href||'#';
     card.className='note-card';
     card.innerHTML=`<div class="note-meta"><span class="note-kicker">${n.kicker}</span><span class="note-mins">${n.mins}</span></div>
       <div class="note-title">${n.title}</div>
