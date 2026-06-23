@@ -72,7 +72,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 1
   .mobile-menu a{display:block;padding:15px 20px;border-bottom:1.5px solid var(--line2);color:var(--ink);font-weight:600;font-size:15px;}
   .mobile-menu a:last-child{border-bottom:none;}
   .mobile-menu a.cta{background:var(--ink);color:var(--paper);}
-  .mobile-status{display:flex;align-items:center;gap:7px;padding:9px 20px;border-bottom:1.5px solid var(--ink);background:var(--green-tint);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:#0C3F2B;}
+  .mobile-status{display:flex;align-items:center;gap:7px;padding:9px 20px;border-bottom:1.5px solid var(--ink);background:var(--green-tint);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--green-ink);}
 }
 
 /* ── SECTIONS ── */

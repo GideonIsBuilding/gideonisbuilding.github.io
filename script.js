@@ -893,3 +893,11 @@ function renderNotes(){
 }
 renderNotes();
 
+document.querySelectorAll('[data-analytics="resume"]').forEach(link => {
+  link.addEventListener('click', () => {
+    window.gtag?.('event', 'resume_click', {
+      event_category: 'engagement',
+      event_label: 'resume'
+    });
+  });
+});
