@@ -265,7 +265,7 @@ const OPERATING_PRINCIPLES = [
 ];
 
 const TIMELINE_DATA = [
-  {when:'Sep 2024 – Mar 2026', role:'Site Reliability Engineer', org:'TechPeak Lab · London',
+  {when:'Sep 2024 – Present', role:'Site Reliability Engineer', org:'TechPeak Lab · London',
     detail:'Migrated 1,200+ SCOM alerts to Splunk and automated NOC forwarding, cutting response latency. Python/PowerShell remediation in playbooks automated recovery for ~35% of repetitive alerts; multi-layer validity checks raised observability coverage to ~86% and PagerDuty routing updates cut service alert noise by ~53%.'},
   {when:'May 2025 – Oct 2025', role:'Technical Content Writer', org:'Turing · Palo Alto, CA',
     detail:'Engineered complex real-world scenarios demonstrating Gemini AI agents across workplace automation and enterprise integration, translating business workflows into modular, testable AI logic and a reusable scenario library.'},
